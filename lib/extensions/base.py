@@ -78,18 +78,22 @@ class InkstitchExtension(inkex.EffectExtension):
             self.no_elements_error()
         return False
 
-    def elements_to_stitch_groups(self, elements):
+    def elements_to_stitch_groups(self, elements, progress_callback=None):
         next_elements = [None]
         if len(elements) > 1:
             next_elements = elements[1:] + next_elements
         stitch_groups = []
-        for element, next_element in zip(elements, next_elements):
+        for index, (element, next_element) in enumerate(zip(elements, next_elements)):
+            if progress_callback is not None:
+                progress_callback(element, index)
             if stitch_groups:
                 last_stitch_group = stitch_groups[-1]
             else:
                 last_stitch_group = None
 
             stitch_groups.extend(element.embroider(last_stitch_group, next_element))
+            if progress_callback is not None:
+                progress_callback(element, index + 1)
 
         return stitch_groups
 

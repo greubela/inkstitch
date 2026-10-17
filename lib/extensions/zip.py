@@ -15,6 +15,7 @@ from lxml import etree
 
 import pystitch
 
+from ..gui.embroidery_progress import stitch_groups_with_progress
 from ..i18n import _
 from ..output import write_embroidery_file
 from ..stitch_plan import stitch_groups_to_stitch_plan
@@ -64,7 +65,7 @@ class Zip(InkstitchExtension):
         self.metadata = self.get_inkstitch_metadata()
         collapse_len = self.metadata['collapse_len_mm']
         min_stitch_len = self.metadata['min_stitch_len_mm']
-        stitch_groups = self.elements_to_stitch_groups(self.elements)
+        stitch_groups = stitch_groups_with_progress(self.elements, self.elements_to_stitch_groups)
         stitch_plan = stitch_groups_to_stitch_plan(stitch_groups, collapse_len=collapse_len, min_stitch_len=min_stitch_len)
         ThreadCatalog().match_and_apply_palette(stitch_plan, self.get_inkstitch_metadata()['thread-palette'])
 
